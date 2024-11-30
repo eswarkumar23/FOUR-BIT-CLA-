@@ -1,0 +1,101 @@
+.include TSMC_180nm.txt
+.param SUPPLY=1.8
+.global gnd vdd
+.option scale=0.09u
+Vdd    vdd gnd 'SUPPLY'
+vin    a0_reg 0 pulse 0 1.8 0ns 0ns 0ns 15ns 30ns
+vin2   b0_reg 0 pulse 0 1.8 0ns 0ns 0ns 24ns 48ns 
+
+M1000 a_297_n47# b0_reg gnd Gnd CMOSN w=20 l=2
++  ad=200 pd=100 as=290 ps=156
+M1001 g0 out vdd w_540_13# CMOSP w=12 l=2
++  ad=60 pd=34 as=580 ps=282
+M1002 out b0_reg a_513_n12# Gnd CMOSN w=12 l=2
++  ad=60 pd=34 as=96 ps=40
+M1003 a_267_n59# a0_reg vdd w_254_n29# CMOSP w=40 l=2
++  ad=200 pd=90 as=0 ps=0
+M1004 p0 a_267_n59# a_297_n47# w_291_n57# CMOSP w=20 l=2
++  ad=200 pd=100 as=300 ps=140
+M1005 vdd b0_reg out w_500_14# CMOSP w=12 l=2
++  ad=0 pd=0 as=96 ps=40
+M1006 g0 out gnd Gnd CMOSN w=6 l=2
++  ad=30 pd=22 as=0 ps=0
+M1007 a_267_n59# a0_reg gnd Gnd CMOSN w=20 l=2
++  ad=100 pd=50 as=0 ps=0
+M1008 b0_reg a0_reg p0 w_324_n24# CMOSP w=20 l=2
++  ad=100 pd=50 as=0 ps=0
+M1009 a_513_n12# a0_reg gnd Gnd CMOSN w=12 l=2
++  ad=0 pd=0 as=0 ps=0
+M1010 out a0_reg vdd w_500_14# CMOSP w=12 l=2
++  ad=0 pd=0 as=0 ps=0
+M1011 b0_reg a_267_n59# p0 Gnd CMOSN w=20 l=2
++  ad=100 pd=50 as=200 ps=100
+M1012 p0 a0_reg a_297_n47# Gnd CMOSN w=20 l=2
++  ad=0 pd=0 as=0 ps=0
+M1013 a_297_n47# b0_reg vdd w_367_n30# CMOSP w=40 l=2
++  ad=0 pd=0 as=0 ps=0
+C0 vdd a_267_n59# 0.41fF
+C1 vdd g0 0.15fF
+C2 a_267_n59# a0_reg 0.07fF
+C3 p0 b0_reg 0.62fF
+C4 gnd p0 0.04fF
+C5 w_324_n24# a0_reg 0.09fF
+C6 w_500_14# b0_reg 0.06fF
+C7 vdd out 0.30fF
+C8 vdd a_297_n47# 0.51fF
+C9 a_297_n47# a0_reg 0.40fF
+C10 vdd a0_reg 0.21fF
+C11 w_291_n57# p0 0.06fF
+C12 w_367_n30# b0_reg 0.09fF
+C13 a_267_n59# gnd 0.21fF
+C14 g0 gnd 0.10fF
+C15 w_324_n24# b0_reg 0.06fF
+C16 out b0_reg 0.13fF
+C17 out gnd 0.08fF
+C18 a_297_n47# b0_reg 0.07fF
+C19 a_297_n47# gnd 0.21fF
+C20 w_291_n57# a_267_n59# 0.09fF
+C21 a0_reg b0_reg 0.64fF
+C22 gnd a0_reg 0.05fF
+C23 a_267_n59# p0 0.12fF
+C24 w_291_n57# a_297_n47# 0.06fF
+C25 w_324_n24# p0 0.06fF
+C26 a_297_n47# p0 0.62fF
+C27 w_500_14# out 0.04fF
+C28 a_267_n59# w_254_n29# 0.08fF
+C29 vdd w_500_14# 0.10fF
+C30 g0 w_540_13# 0.03fF
+C31 w_500_14# a0_reg 0.06fF
+C32 gnd b0_reg 0.22fF
+C33 out w_540_13# 0.06fF
+C34 vdd w_540_13# 0.06fF
+C35 vdd w_254_n29# 0.07fF
+C36 w_367_n30# a_297_n47# 0.08fF
+C37 a0_reg w_254_n29# 0.09fF
+C38 w_367_n30# vdd 0.07fF
+C39 g0 out 0.04fF
+C40 gnd Gnd 2.17fF
+C41 g0 Gnd 0.06fF
+C42 p0 Gnd 0.46fF
+C43 a_297_n47# Gnd 2.59fF
+C44 out Gnd 0.01fF
+C45 a_267_n59# Gnd 1.72fF
+C46 vdd Gnd 1.36fF
+C47 b0_reg Gnd 1.88fF
+C48 a0_reg Gnd 3.35fF
+C49 w_540_13# Gnd 0.58fF
+C50 w_500_14# Gnd 0.58fF
+C51 w_367_n30# Gnd 0.60fF
+C52 w_324_n24# Gnd 0.31fF
+C53 w_291_n57# Gnd 1.00fF
+C54 w_254_n29# Gnd 1.43fF
+
+
+    .tran 0.1n 200n
+    .control
+    run
+     set curplottitle  = "Eswar-2023102011"
+    plot 9+v(a0_reg) 6+v(b0_reg) 3+v(g0) v(p0)
+    .endc
+
+

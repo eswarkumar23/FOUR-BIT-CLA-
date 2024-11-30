@@ -1,0 +1,53 @@
+.include TSMC_180nm.txt
+.param SUPPLY=1.8
+
+.global gnd vdd
+.option scale=0.09u
+Vdd    vdd gnd 'SUPPLY'
+vin    a 0 pulse 0 1.8 0ns 0ns 0ns 10ns 20ns
+vin2   b 0 pulse 0 1.8 0ns 0ns 0ns 6ns 12ns 
+
+M1000 a_13_6# a vdd w_0_0# CMOSP w=24 l=2
++  ad=192 pd=64 as=180 ps=92
+M1001 op in vdd w_41_n1# CMOSP w=12 l=2
++  ad=60 pd=34 as=0 ps=0
+M1002 op in gnd Gnd CMOSN w=6 l=2
++  ad=30 pd=22 as=90 ps=66
+M1003 gnd b in Gnd CMOSN w=6 l=2
++  ad=0 pd=0 as=48 ps=28
+M1004 in b a_13_6# w_0_0# CMOSP w=24 l=2
++  ad=120 pd=58 as=0 ps=0
+M1005 in a gnd Gnd CMOSN w=6 l=2
++  ad=0 pd=0 as=0 ps=0
+C0 gnd in 0.24fF
+C1 gnd a 0.05fF
+C2 in w_0_0# 0.05fF
+C3 w_0_0# a 0.06fF
+C4 vdd w_41_n1# 0.06fF
+C5 vdd op 0.15fF
+C6 vdd in 0.05fF
+C7 b in 0.16fF
+C8 b a 0.24fF
+C9 w_41_n1# op 0.03fF
+C10 vdd w_0_0# 0.08fF
+C11 b w_0_0# 0.06fF
+C12 in w_41_n1# 0.06fF
+C13 in op 0.04fF
+C14 in a 0.02fF
+C15 gnd op 0.10fF
+C16 gnd Gnd 0.27fF
+C17 op Gnd 0.05fF
+C18 in Gnd 0.24fF
+C19 vdd Gnd 0.15fF
+C20 b Gnd 0.20fF
+C21 a Gnd 0.18fF
+C22 w_41_n1# Gnd 0.58fF
+C23 w_0_0# Gnd 1.23fF
+
+    .tran 0.1n 200n
+    .control
+    run
+     set curplottitle  = "Eswar-2023102011"
+    plot 5+v(a) 3+v(b) v(op)
+    .endc
+

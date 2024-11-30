@@ -1,0 +1,87 @@
+.include TSMC_180nm.txt
+.param SUPPLY=1.8
+.global gnd vdd
+.option scale=0.09u
+Vdd    vdd gnd 'SUPPLY'
+vin0   clk 0 pulse 0 1.8 0ns 0ns 0ns 6ns 12ns
+vin    d 0 pulse 0 1.8 0ns 0ns 0ns 15ns 30ns
+
+M1000 a_n20_n2# d vdd w_n33_n8# CMOSP w=25 l=2
++  ad=150 pd=62 as=500 ps=240
+M1001 x d gnd Gnd CMOSN w=10 l=2
++  ad=50 pd=30 as=200 ps=120
+M1002 q qb vdd w_94_n8# CMOSP w=25 l=2
++  ad=125 pd=60 as=0 ps=0
+M1003 qb y vdd w_49_n8# CMOSP w=25 l=2
++  ad=125 pd=60 as=0 ps=0
+M1004 a_56_n34# y gnd Gnd CMOSN w=10 l=2
++  ad=60 pd=32 as=0 ps=0
+M1005 y x a_12_n34# Gnd CMOSN w=10 l=2
++  ad=50 pd=30 as=60 ps=32
+M1006 a_12_n34# clk gnd Gnd CMOSN w=10 l=2
++  ad=0 pd=0 as=0 ps=0
+M1007 qb clk a_56_n34# Gnd CMOSN w=10 l=2
++  ad=50 pd=30 as=0 ps=0
+M1008 x clk a_n20_n2# w_n33_n8# CMOSP w=25 l=2
++  ad=125 pd=60 as=0 ps=0
+M1009 y clk vdd w_5_n8# CMOSP w=25 l=2
++  ad=125 pd=60 as=0 ps=0
+M1010 q qb gnd Gnd CMOSN w=10 l=2
++  ad=50 pd=30 as=0 ps=0
+C0 w_49_n8# y 0.06fF
+C1 vdd qb 0.37fF
+C2 gnd qb 0.12fF
+C3 gnd a_12_n34# 0.14fF
+C4 w_n33_n8# x 0.05fF
+C5 clk d 0.07fF
+C6 w_94_n8# vdd 0.07fF
+C7 w_5_n8# clk 0.06fF
+C8 w_5_n8# y 0.09fF
+C9 vdd x 0.03fF
+C10 vdd q 0.29fF
+C11 gnd x 0.24fF
+C12 y clk 0.05fF
+C13 gnd q 0.14fF
+C14 w_94_n8# qb 0.06fF
+C15 q qb 0.07fF
+C16 vdd w_49_n8# 0.07fF
+C17 w_n33_n8# d 0.06fF
+C18 w_49_n8# qb 0.09fF
+C19 w_n33_n8# clk 0.06fF
+C20 w_94_n8# q 0.05fF
+C21 gnd a_56_n34# 0.14fF
+C22 vdd w_5_n8# 0.07fF
+C23 a_56_n34# qb 0.10fF
+C24 a_n20_n2# w_n33_n8# 0.01fF
+C25 gnd clk 0.05fF
+C26 vdd y 0.37fF
+C27 gnd y 0.18fF
+C28 qb clk 0.15fF
+C29 a_12_n34# y 0.10fF
+C30 a_n20_n2# vdd 0.29fF
+C31 vdd w_n33_n8# 0.08fF
+C32 x clk 0.43fF
+C33 x y 0.22fF
+C34 a_n20_n2# x 0.26fF
+C35 a_56_n34# Gnd 0.01fF
+C36 a_12_n34# Gnd 0.01fF
+C37 gnd Gnd 0.26fF
+C38 clk Gnd 0.51fF
+C39 q Gnd 0.10fF
+C40 x Gnd 0.38fF
+C41 vdd Gnd 0.18fF
+C42 qb Gnd 0.44fF
+C43 y Gnd 0.25fF
+C44 d Gnd 0.22fF
+C45 w_94_n8# Gnd 0.97fF
+C46 w_49_n8# Gnd 0.97fF
+C47 w_5_n8# Gnd 0.97fF
+C48 w_n33_n8# Gnd 1.19fF
+
+    .tran 0.1ns 200ns
+    .control
+    run
+     set curplottitle  = "Eswar-2023102011"
+    plot 5+v(clk) 3+v(d) v(q)
+    .endc
+
