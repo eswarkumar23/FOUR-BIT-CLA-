@@ -1,0 +1,61 @@
+    .include TSMC_180nm.txt
+    .include invertor.cir
+    .param SUPPLY=1.8
+    .param LAMBDA=0.09u
+    .global gnd vdd
+    Vdd    vdd gnd 'SUPPLY'
+    vin    d 0 pulse 0 1.8 0ns 0ns 0ns 10ns 20ns
+    vin2   clk 0 pulse 0 1.8 0ns 0ns 0ns 6ns 12ns 
+    
+    .subckt d_flip_flop  q  d  clk vdd gnd
+    .param width_P={48*LAMBDA}
+    .param width_N={20*LAMBDA}
+
+    M1      y       d      vdd     vdd  CMOSP   W={width_P}   L={2*LAMBDA}
+    + AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+    M2      temp      clk      y    vdd  CMOSP   W={width_P}   L={2*LAMBDA}
+    + AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+
+    M3      temp      d       gnd   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
+    + AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+
+
+    M4     var      clk      vdd    vdd  CMOSP   W={width_P}   L={2*LAMBDA}
+    + AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+
+    M5   var     temp      x   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
+    + AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+    M6   x     clk       gnd   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
+    + AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+
+    M7     last      var     vdd    vdd  CMOSP   W={width_P}   L={2*LAMBDA}
+    + AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+
+    M8   last      clk     z   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
+    + AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+    M9   z    var       gnd   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
+    + AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+     xx2 last q vdd gnd invertor_gate
+    .ends  d_flip_flop 
+    x1  q  d  clk vdd gnd  d_flip_flop 
+
+    .tran 0.1n 200n
+    .control
+    run
+    set curplottitle  = "Eswar-2023102011"
+    plot 5+v(d) 3+v(clk) v(q)
+    .endc
+
+
+
+
+

@@ -1,0 +1,46 @@
+        .include TSMC_180nm.txt
+        .include invertor.cir
+        .param SUPPLY=1.8
+        .param LAMBDA=0.09u
+        .global gnd vdd
+        Vdd    vdd gnd 'SUPPLY'
+        vin    a 0 pulse 0 1.8 0ns 0ns 0ns 10ns 20ns
+        vin2   b 0 pulse 0 1.8 0ns 0ns 0ns 6ns 12ns 
+        .subckt XOR a b out vdd gnd
+        
+        .param Wn = {20*LAMBDA}
+        .param Wp = {48*LAMBDA}
+
+        X1 a a_bar vdd gnd invertor_gate
+        X2 b b_bar vdd gnd invertor_gate
+        
+        M1 Y_bar a_bar b vdd CMOSP 
+            + W={Wp}           L={2*LAMBDA} 
+            + AS={5*Wp*LAMBDA} PS={10*LAMBDA+2*Wp} 
+            + AD={5*Wp*LAMBDA} PD={10*LAMBDA+2*Wp}
+        
+        M2 Y_bar a b  gnd CMOSN 
+        + W={Wn}           L={2*LAMBDA}
+        + AS={5*Wn*LAMBDA} PS={10*LAMBDA+2*Wn} 
+        + AD={5*Wn*LAMBDA} PD={10*LAMBDA+2*Wn}
+        
+        M3 Y_bar a b_bar vdd CMOSP 
+            + W={Wp}           L={2*LAMBDA} 
+            + AS={5*Wp*LAMBDA} PS={10*LAMBDA+2*Wp} 
+            + AD={5*Wp*LAMBDA} PD={10*LAMBDA+2*Wp}
+        
+        M4 Y_bar a_bar b_bar gnd CMOSN 
+        + W={Wn}           L={2*LAMBDA}
+        + AS={5*Wn*LAMBDA} PS={10*LAMBDA+2*Wn} 
+        + AD={5*Wn*LAMBDA} PD={10*LAMBDA+2*Wn}
+        
+        X3 Y_bar out vdd gnd invertor_gate
+        
+        .ends XOR
+        X4 a b out vdd gnd XOR
+            .tran 0.1n 200n
+            .control
+            run
+            set curplottitle  = "Eswar-2023102011"
+            plot 7+v(a) 4+v(b)  v(out)
+            .endc

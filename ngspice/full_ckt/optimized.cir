@@ -1,0 +1,227 @@
+.include TSMC_180nm.txt
+.param SUPPLY=1.8
+.param LAMBDA=0.09u
+.param width_Ncla={20*LAMBDA}
+.param width_Pcla={2.5*20*LAMBDA}
+
+Vdd    vdd gnd 'SUPPLY'
+
+vin0   clk 0 pulse 0 1.8 0ns 0ns 0ns 5ns 10ns
+vin    a0 0 pulse 0 1.8 0ns 0ns 0ns 12ns 24ns  
+vin2   a1 0 pulse 0 1.8 0ns 0ns 0ns 11ns 22ns    
+vin3   a2 0 pulse 0 1.8 0ns 0ns 0ns 8ns 16ns  
+vin4   a3 0 pulse 0 1.8 0ns 0ns 0ns 7ns 15ns   
+vin5   b0 0 pulse 0 1.8 0ns 0ns 0ns 9ns 18ns   
+vin6   b1 0 pulse 0 1.8 0ns 0ns 0ns 11ns 22ns  
+vin7   b2 0 pulse 0 1.8 0ns 0ns 0ns 12ns 24ns   
+vin8   b3 0 pulse 0 1.8 0ns 0ns 0ns 9ns 18ns   
+vin9   carry 0 pulse 0 1.8 0ns 0ns 0ns 9ns 18ns 
+
+
+
+.subckt invertor_gate a y vdd gnd
+.param width_P={48*LAMBDA}
+.param width_N={20*LAMBDA}
+
+M1 y a gnd gnd CMOSN W={width_N} L={2*LAMBDA} 
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N}  AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+M2 y a vdd vdd CMOSP W={width_P} L={2*LAMBDA} 
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+.ends invertor_gate
+
+.subckt d_flip_flop  q d clk vdd gnd
+.param width_P={48*LAMBDA}
+.param width_N={20*LAMBDA}
+
+M1      y       d      vdd     vdd  CMOSP   W={width_P}   L={2*LAMBDA}
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+M2      temp      clk      y    vdd  CMOSP   W={width_P}   L={2*LAMBDA}
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+M3      temp      d       gnd   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+M4     var      clk      vdd    vdd  CMOSP   W={width_P}   L={2*LAMBDA}
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+M5   var     temp      x   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+M6   x     clk       gnd   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+M7     last      var     vdd    vdd  CMOSP   W={width_P}   L={2*LAMBDA}
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+M8   last      clk     z   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+M9   z    var       gnd   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+x_inv last q vdd gnd invertor_gate
+.ends  d_flip_flop
+
+x0 a0_reg a0 clk vdd gnd d_flip_flop
+x1 a1_reg a1 clk vdd gnd d_flip_flop
+x2 a2_reg a2 clk vdd gnd d_flip_flop
+x3 a3_reg a3 clk vdd gnd d_flip_flop
+x4 b0_reg b0 clk vdd gnd d_flip_flop
+x5 b1_reg b1 clk vdd gnd d_flip_flop
+x6 b2_reg b2 clk vdd gnd d_flip_flop
+x7 b3_reg b3 clk vdd gnd d_flip_flop
+x88 carry_reg carry clk vdd gnd d_flip_flop
+
+
+        .subckt XOR a b out vdd gnd
+        
+        .param width_N = {20*LAMBDA}
+        .param width_P = {48*LAMBDA}
+
+        X1 a a_bar vdd gnd invertor_gate
+        X2 b b_bar vdd gnd invertor_gate
+        
+        M1 y_bar a_bar b vdd CMOSP  W={width_P}   L={2*LAMBDA} 
+        + AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+        
+        M2 y_bar a b  gnd CMOSN    W={width_N}    L={2*LAMBDA}
+        + AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+        
+        M3 y_bar a b_bar vdd CMOSP  W={width_P}    L={2*LAMBDA} 
+        + AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P}  AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+        
+        M4 y_bar a_bar b_bar gnd CMOSN  W={width_N}   L={2*LAMBDA}
+        + AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N}  AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+        
+        X3 y_bar out vdd gnd invertor_gate
+        
+        .ends XOR
+
+x8 a0_reg b0_reg p0 vdd gnd XOR
+x9 a1_reg b1_reg p1 vdd gnd XOR
+x10 a2_reg b2_reg p2 vdd gnd XOR
+x11 a3_reg b3_reg p3 vdd gnd XOR
+
+
+.subckt and_gate a b out Vdd gnd
+    
+    .param width_N = {20*LAMBDA}
+    .param width_P = {48*LAMBDA}
+
+   M1 out_bar a vdd vdd CMOSP W={width_P}    L={2*LAMBDA} 
+    + AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P}  AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+   M2 out_bar b vdd vdd CMOSP  W={width_P}   L={2*LAMBDA} 
+    + AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P}  AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+   M3 out_bar a x gnd CMOSN  W={width_N}    L={2*LAMBDA}
+   + AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N}  AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+   
+   M4 x b gnd gnd CMOSN  W={width_N}     L={2*LAMBDA}
+   + AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N}  AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N} 
+
+   X1 out_bar out vdd gnd invertor_gate
+
+.ends and_gate
+
+    x12 a0_reg b0_reg g0 vdd gnd and_gate
+    x13 a1_reg b1_reg g1 vdd gnd and_gate
+    x14 a2_reg b2_reg g2 vdd gnd and_gate
+    x15 a3_reg b3_reg g3 vdd gnd and_gate
+
+
+
+*CLA LOGIC
+
+x16  clk  clk_bar  vdd  gnd  invertor_gate   
+
+ 
+M1      c0_bar       clk_bar       vdd     vdd  CMOSP   W={width_Pcla}   L={2*LAMBDA}
++ AS={5*width_Pcla*LAMBDA} PS={10*LAMBDA+2*width_Pcla} AD={5*width_Pcla*LAMBDA} PD={10*LAMBDA+2*width_Pcla}
+
+M2      c0_bar       p0       k1     gnd   CMOSN   W={width_Ncla}   L={2*LAMBDA}
++ AS={5*width_Ncla*LAMBDA} PS={10*LAMBDA+2*width_Ncla} AD={5*width_Ncla*LAMBDA} PD={10*LAMBDA+2*width_Ncla}
+
+M3      k1       carry_reg       f1     gnd   CMOSN   W={width_Ncla}   L={2*LAMBDA}
++ AS={5*width_Ncla*LAMBDA} PS={10*LAMBDA+2*width_Ncla} AD={5*width_Ncla*LAMBDA} PD={10*LAMBDA+2*width_Ncla}
+
+M4      f1       clk_bar       gnd     gnd   CMOSN   W={width_Ncla}   L={2*LAMBDA}
++ AS={5*width_Ncla*LAMBDA} PS={10*LAMBDA+2*width_Ncla} AD={5*width_Ncla*LAMBDA} PD={10*LAMBDA+2*width_Ncla}
+
+
+M5      c1_bar       clk_bar       vdd     vdd  CMOSP   W={width_Pcla}   L={2*LAMBDA}
++ AS={5*width_Pcla*LAMBDA} PS={10*LAMBDA+2*width_Pcla} AD={5*width_Pcla*LAMBDA} PD={10*LAMBDA+2*width_Pcla}
+
+M6      c1_bar       p1       c0_bar     gnd   CMOSN   W={width_Ncla}   L={2*LAMBDA}
++ AS={5*width_Ncla*LAMBDA} PS={10*LAMBDA+2*width_Ncla} AD={5*width_Ncla*LAMBDA} PD={10*LAMBDA+2*width_Ncla}
+
+M7      c0_bar       g0       f1     gnd   CMOSN   W={width_Ncla}   L={2*LAMBDA}
++ AS={5*width_Ncla*LAMBDA} PS={10*LAMBDA+2*width_Ncla} AD={5*width_Ncla*LAMBDA} PD={10*LAMBDA+2*width_Ncla}
+
+
+
+M8      c2_bar       clk_bar       vdd     vdd  CMOSP   W={width_Pcla}   L={2*LAMBDA}
++ AS={5*width_Pcla*LAMBDA} PS={10*LAMBDA+2*width_Pcla} AD={5*width_Pcla*LAMBDA} PD={10*LAMBDA+2*width_Pcla}
+
+M9      c2_bar       p2       c1_bar     gnd   CMOSN   W={width_Ncla}   L={2*LAMBDA}
++ AS={5*width_Ncla*LAMBDA} PS={10*LAMBDA+2*width_Ncla} AD={5*width_Ncla*LAMBDA} PD={10*LAMBDA+2*width_Ncla}
+
+M10      c1_bar       g1       f1     gnd   CMOSN   W={width_Ncla}   L={2*LAMBDA}
++ AS={5*width_Ncla*LAMBDA} PS={10*LAMBDA+2*width_Ncla} AD={5*width_Ncla*LAMBDA} PD={10*LAMBDA+2*width_Ncla}
+
+
+
+M11      out_carry_bar       clk_bar       vdd     vdd  CMOSP   W={width_Pcla}   L={2*LAMBDA}
++ AS={5*width_Pcla*LAMBDA} PS={10*LAMBDA+2*width_Pcla} AD={5*width_Pcla*LAMBDA} PD={10*LAMBDA+2*width_Pcla}
+
+M12      out_carry_bar       p3       c2_bar     gnd   CMOSN   W={width_Ncla}   L={2*LAMBDA}
++ AS={5*width_Ncla*LAMBDA} PS={10*LAMBDA+2*width_Ncla} AD={5*width_Ncla*LAMBDA} PD={10*LAMBDA+2*width_Ncla}
+
+M13      c2_bar       g2       f1     gnd   CMOSN   W={width_Ncla}   L={2*LAMBDA}
++ AS={5*width_Ncla*LAMBDA} PS={10*LAMBDA+2*width_Ncla} AD={5*width_Ncla*LAMBDA} PD={10*LAMBDA+2*width_Ncla}
+
+
+
+M14      out_carry_bar       g3       f1     gnd   CMOSN   W={width_Ncla}   L={2*LAMBDA}
++ AS={5*width_Ncla*LAMBDA} PS={10*LAMBDA+2*width_Ncla} AD={5*width_Ncla*LAMBDA} PD={10*LAMBDA+2*width_Ncla}
+
+
+
+x17 c0_bar c0 vdd gnd invertor_gate
+x18 c1_bar c1 vdd gnd invertor_gate
+x19 c2_bar c2 vdd gnd invertor_gate
+x20 out_carry_bar out_carry vdd gnd invertor_gate
+
+
+
+x21 p0 carry_reg s0 vdd gnd XOR              
+x22 p1 c0 s1 vdd gnd XOR                
+x23 p2 c1 s2 vdd gnd XOR                 
+x24 p3 c2 s3 vdd gnd XOR               
+
+
+
+
+x25 out_carry_reg out_carry clk vdd gnd d_flip_flop 
+x26 s0_reg s0 clk vdd gnd d_flip_flop              
+x27 s1_reg s1 clk vdd gnd d_flip_flop             
+x28 s2_reg s2 clk vdd gnd d_flip_flop              
+x29 s3_reg s3 clk vdd gnd d_flip_flop              
+
+
+    .tran 0.1n 200n
+    .meas tran tpcq TRIG V(clk) VAL=0.9 RISE=2
+      + TARG V(s1) VAL=0.9 FALL=1
+    .control
+    run
+    set curplottitle  = "Eswar-2023102011"
+    * plot 21+v(p0) 18+v(g0) 15+v(g2) 12+v(p2)  9+v(p1)  6+v(p0)  3+v(g1)  v(carry)
+plot  12+v(clk) 9+v(a0) 6+v(a1) 3+v(a2) v(a3) 
+plot  15+v(clk) 12+v(b0) 9+v(b1) 6+v(b2) 3+v(b3)  v(carry)
+plot  15+v(clk) 12+v(s0_reg) 9+v(s1_reg) 6+v(s2_reg) 3+v(s3_reg)  v(out_carry_reg)
+* plot  3+v(clk)   v(s1)
+* plot 15+v(c0) 12+v(c1)  9+v(c2)  6+v(carry_reg)  3+v(g2)  v(p2)
+    .endc
+

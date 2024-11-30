@@ -1,0 +1,113 @@
+.include TSMC_180nm.txt
+.param SUPPLY=1.8
+.param LAMBDA=0.09u
+.global gnd vdd
+
+Vdd    vdd gnd 'SUPPLY'
+vin0   clk 0 pulse 0 1.8 0ns 0ns 0ns 5ns 10ns 
+vin1   carry 0 pulse 0 1.8 0ns 0ns 0ns 9ns 18ns
+vin    a0 0 pulse 0 1.8 0ns 0ns 0ns 12ns 24ns  
+vin2   a1 0 pulse 0 1.8 0ns 0ns 0ns 8ns 16ns    
+vin3   a2 0 pulse 0 1.8 0ns 0ns 0ns 11ns 22ns  
+vin4   a3 0 pulse 0 1.8 0ns 0ns 0ns 9ns 18ns   
+vin5   b0 0 pulse 0 1.8 0ns 0ns 0ns 24ns 48ns   
+vin6   b1 0 pulse 0 1.8 0ns 0ns 0ns 16ns 32ns  
+vin7   b2 0 pulse 0 1.8 0ns 0ns 0ns 22ns 44ns   
+vin8   b3 0 pulse 0 1.8 0ns 0ns 0ns 18ns 36ns   
+
+.subckt invertor_gate a y vdd gnd
+.param width_P={48*LAMBDA}
+.param width_N={20*LAMBDA}
+
+M1 y a gnd gnd CMOSN W={width_N} L={2*LAMBDA} 
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N}  AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+M2 y a vdd vdd CMOSP W={width_P} L={2*LAMBDA} 
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+.ends invertor_gate
+
+.subckt d_flip_flop  q d clk vdd gnd
+.param width_P={48*LAMBDA}
+.param width_N={20*LAMBDA}
+
+M1      y       d      vdd     vdd  CMOSP   W={width_P}   L={2*LAMBDA}
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+M2      temp      clk      y    vdd  CMOSP   W={width_P}   L={2*LAMBDA}
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+M3      temp      d       gnd   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+M4     var      clk      vdd    vdd  CMOSP   W={width_P}   L={2*LAMBDA}
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+M5   var     temp      x   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+M6   x     clk       gnd   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+M7     last      var     vdd    vdd  CMOSP   W={width_P}   L={2*LAMBDA}
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+M8   last      clk     z   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+M9   z    var       gnd   gnd  CMOSN   W={2*width_N}   L={2*LAMBDA}
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+x_inv last q vdd gnd invertor_gate
+.ends  d_flip_flop
+
+x0 a0_reg a0 clk vdd gnd d_flip_flop
+x1 a1_reg a1 clk vdd gnd d_flip_flop
+x2 a2_reg a2 clk vdd gnd d_flip_flop
+x3 a3_reg a3 clk vdd gnd d_flip_flop
+x4 b0_reg b0 clk vdd gnd d_flip_flop
+x5 b1_reg b1 clk vdd gnd d_flip_flop
+x6 b2_reg b2 clk vdd gnd d_flip_flop
+x7 b3_reg b3 clk vdd gnd d_flip_flop
+
+
+        .subckt XOR a b out vdd gnd
+        
+        .param width_N = {20*LAMBDA}
+        .param width_P = {48*LAMBDA}
+
+        X1 a a_bar vdd gnd invertor_gate
+        X2 b b_bar vdd gnd invertor_gate
+        
+        M1 y_bar a_bar b vdd CMOSP  W={width_P}   L={2*LAMBDA} 
+        + AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+        
+        M2 y_bar a b  gnd CMOSN    W={width_N}    L={2*LAMBDA}
+        + AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+        
+        M3 y_bar a b_bar vdd CMOSP  W={width_P}    L={2*LAMBDA} 
+        + AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P}  AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+        
+        M4 y_bar a_bar b_bar gnd CMOSN  W={width_N}   L={2*LAMBDA}
+        + AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N}  AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+        
+        X3 y_bar out vdd gnd invertor_gate
+        
+        .ends XOR
+
+x8 a0_reg b0_reg p0 vdd gnd XOR
+x9 a1_reg b1_reg p1 vdd gnd XOR
+x10 a2_reg b2_reg p2 vdd gnd XOR
+x11 a3_reg b3_reg p3 vdd gnd XOR
+
+
+.tran 0.1n 200n
+.meas tran tpcq TRIG V(clk) VAL=0.9 RISE=3
++ TARG V(p0) VAL=0.9 RISE=1
+.control
+    run
+    set curplottitle = "Eswar-2023102011"
+    plot  10+v(clk) 7+v(a0_reg) 4+v(b0_reg)  v(p0)
+    plot  7+v(a1_reg) 4+v(b1_reg)  v(p1)
+    plot  7+v(a2_reg) 4+v(b2_reg)  v(p2)
+    plot  7+v(a3_reg) 4+v(b3_reg)  v(p3)
+.endc

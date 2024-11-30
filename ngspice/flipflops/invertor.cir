@@ -1,0 +1,15 @@
+.include TSMC_180nm.txt
+.param SUPPLY=1.8
+.param LAMBDA=0.09u
+.global gnd vdd
+
+.subckt invertor_gate a y vdd gnd
+.param width_P={48*LAMBDA}
+.param width_N={20*LAMBDA}
+
+M1 y a gnd gnd CMOSN W={width_N} L={2*LAMBDA} 
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N}  AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+M2 y a vdd vdd CMOSP W={width_P} L={2*LAMBDA} 
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+.ends invertor_gate

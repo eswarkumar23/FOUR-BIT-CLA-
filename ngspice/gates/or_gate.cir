@@ -1,0 +1,38 @@
+.include TSMC_180nm.txt
+.include invertor.cir
+.param SUPPLY=1.8
+.param LAMBDA=0.09u
+.global gnd vdd
+Vdd    vdd gnd 'SUPPLY'
+vin    a 0 pulse 0 1.8 0ns 0ns 0ns 10ns 20ns
+vin2   b 0 pulse 0 1.8 0ns 0ns 0ns 6ns 12ns 
+.subckt or_gate a b out vdd gnd
+.param width_P={48*LAMBDA}
+.param width_N={20*LAMBDA}
+* PMOS transistors
+* d g s b 
+M1      x       a       vdd     vdd  CMOSP   W={width_P}   L={2*LAMBDA}
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+M2      y       b       x    vdd  CMOSP   W={width_P}   L={2*LAMBDA}
++ AS={5*width_P*LAMBDA} PS={10*LAMBDA+2*width_P} AD={5*width_P*LAMBDA} PD={10*LAMBDA+2*width_P}
+
+* NMOS transistors
+M3      y       a       gnd    gnd  CMOSN   W={width_N}   L={2*LAMBDA}
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+M4      y      b    gnd     gnd  CMOSN   W={width_N}   L={2*LAMBDA}
++ AS={5*width_N*LAMBDA} PS={10*LAMBDA+2*width_N} AD={5*width_N*LAMBDA} PD={10*LAMBDA+2*width_N}
+
+x_inv y out vdd gnd invertor_gate
+
+.ends or_gate
+
+x1   a b out  vdd gnd or_gate
+
+.tran 0.1n 200n
+.control
+run
+set curplottitle  = "Eswar-2023102011"
+plot 5+v(a) 3+v(b) v(out)
+.endc
