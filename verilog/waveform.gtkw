@@ -1,0 +1,50 @@
+[*]
+[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
+[*] Wed Nov 20 11:58:17 2024
+[*]
+[dumpfile] "/home/eswar-kumar/Desktop/vlsi project/verilog/normal/waveform.vcd"
+[dumpfile_mtime] "Wed Nov 20 11:49:32 2024"
+[dumpfile_size] 4586
+[savefile] "/home/eswar-kumar/Desktop/vlsi project/verilog/normal/waveform.gtkw"
+[timestart] 0
+[size] 1854 1001
+[pos] -27 -24
+*-4.798658 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 278
+[signals_width] 134
+[sst_expanded] 1
+[sst_vpaned_height] 297
+@28
+tb_four_bit_adder_cla.clk
+tb_four_bit_adder_cla.carry
+@800022
+tb_four_bit_adder_cla.a[3:0]
+@28
+(0)tb_four_bit_adder_cla.a[3:0]
+(1)tb_four_bit_adder_cla.a[3:0]
+(2)tb_four_bit_adder_cla.a[3:0]
+(3)tb_four_bit_adder_cla.a[3:0]
+@1001200
+-group_end
+@800022
+tb_four_bit_adder_cla.b[3:0]
+@28
+(0)tb_four_bit_adder_cla.b[3:0]
+(1)tb_four_bit_adder_cla.b[3:0]
+(2)tb_four_bit_adder_cla.b[3:0]
+(3)tb_four_bit_adder_cla.b[3:0]
+@1001200
+-group_end
+@28
+tb_four_bit_adder_cla.out_carry_reg
+@800023
+tb_four_bit_adder_cla.sum_reg[3:0]
+@29
+(0)tb_four_bit_adder_cla.sum_reg[3:0]
+(1)tb_four_bit_adder_cla.sum_reg[3:0]
+(2)tb_four_bit_adder_cla.sum_reg[3:0]
+(3)tb_four_bit_adder_cla.sum_reg[3:0]
+@1001201
+-group_end
+[pattern_trace] 1
+[pattern_trace] 0
